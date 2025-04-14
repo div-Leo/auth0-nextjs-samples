@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'reactstrap';
 import { useUser } from '@auth0/nextjs-auth0';
 
@@ -9,6 +9,32 @@ import Highlight from '../../components/Highlight';
 
 export default function Profile() {
   const { user, isLoading } = useUser();
+
+  const [state, setState] = useState({ isLoading: false, credentials: undefined, error: undefined });
+
+  const callApi = async () => {
+    setState(previous => ({ ...previous, isLoading: true }));
+
+    try {
+      const response = await fetch('/api/credentials');
+      const data = await response.json();
+
+      setState(previous => ({ ...previous, credentials: data, error: undefined }));
+    } catch (error) {
+      setState(previous => ({ ...previous, credentials: undefined, error }));
+    } finally {
+      setState(previous => ({ ...previous, isLoading: false }));
+    }
+  };
+
+  useEffect(() => {
+    callApi();
+  }, []);
+
+  const { isLoading: isLoadingApi, credentials, error } = state;
+
+  console.log('user', user);
+  console.log('credentials', credentials);
 
   return (
     <>
@@ -34,6 +60,7 @@ export default function Profile() {
           </Row>
           <Row data-testid="profile-json">
             <Highlight>{JSON.stringify(user, null, 2)}</Highlight>
+            <Highlight>{JSON.stringify(credentials, null, 2)}</Highlight>
           </Row>
         </>
       )}

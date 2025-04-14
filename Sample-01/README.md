@@ -26,11 +26,28 @@ For the **External API** page to work, you will need to [create an API](https://
 
 If you do not wish to use an API or observe the API call working, you should not specify the `AUTH0_AUDIENCE` and `AUTH0_SCOPE` values in the next steps.
 
+### Auth0 Application (mandatory)
+
+In order to work with passkey we need to do the following configuration (use the page reference at end of each point to find the settings):
+
+- Application type should be Regular Web Application `Applications | DefaultApp | Settings`
+- Enable passkey DB (Authentication Profile needs to be set to "Identifier First") `Authentication | Database | Username-Password-Authentication | Authentication Methods`
+- Authentication method: any other than None (using “Client Secret Post”) `Applications | DefaultApp | Credentials`
+- Set Grant Type to “Client Credentials” `Applications | DefaultApp | Settings | Advanced Settings (bottom) | Grant Types`
+
+References:
+- [All You Need To Know About Passkeys at Auth0!](https://auth0.com/blog/all-you-need-to-know-about-passkeys-at-auth0/)
+- [I’ve Got Passkeys Working in My App! But How Do I Manage Them?](https://auth0.com/blog/passkeys-management/)
+- [Activate Passkeys and Let Your Users Log in without a Password](https://auth0.com/blog/activate-passkeys-let-users-log-in-without-password/)
+
+I left question for the community to confirm that all this is necessary: [here](https://community.auth0.com/t/how-to-retrieve-publickey-and-when-login-in-with-passkey/185442)
+
 ### Configure credentials
 
 The project needs to be configured with your Auth0 Domain, Client ID and Client Secret for the authentication flow to work.
 
 To do this, first copy `.env.local.example` into a new file in the same folder called `.env.local`, and replace the values with your own Auth0 application credentials (see more info about [loading environmental variables in Next.js](https://nextjs.org/docs/basic-features/environment-variables)):
+
 
 ```sh
 # A long secret value used to encrypt the session cookie
@@ -52,6 +69,9 @@ AUTH0_SCOPE='openid profile email read:shows'
 ```
 
 **Note**: Make sure you replace `AUTH0_SECRET` with your own secret (you can generate a suitable string using `openssl rand -hex 32` on the command line).
+
+N.B. 
+Docs in the example are not up to date. For the Allowed Callback URLs use `http://localhost:3000/auth/callback` and for the others below `http://localhost:3000`
 
 ## Run the sample
 
